@@ -1,10 +1,13 @@
 import pygame, random
 
 pygame.init()
-SIZE, TILE = 400, 18
+FPS = 60
+SIZE = 400
+TILE = 18
 screen = pygame.display.set_mode((SIZE, SIZE))
 clock = pygame.time.Clock()
-
+font = pygame.font.SysFont('Arial', 30)
+text = font.render("You Lose", True, (255, 255, 255))
 
 class Segment(pygame.sprite.Sprite):
     def __init__(self, x, y, color='green'):
@@ -45,16 +48,22 @@ food_sprite = Segment(random.randint(0, 380), random.randint(0, 380), 'red')
 food_group = pygame.sprite.GroupSingle(food_sprite)
 
 snake = Snake()
+game = True
 
-while True:
+while game == True:
     screen.fill('black')
     for event in pygame.event.get():
-        if event.type == pygame.QUIT: exit()
+        if event.type == pygame.QUIT:
+            exit()
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:    snake.vx, snake.vy = 0, -snake.vel
-            if event.key == pygame.K_DOWN:  snake.vx, snake.vy = 0, snake.vel
-            if event.key == pygame.K_LEFT:  snake.vx, snake.vy = -snake.vel, 0
-            if event.key == pygame.K_RIGHT: snake.vx, snake.vy = snake.vel, 0
+            if event.key == pygame.K_UP:
+                snake.vx, snake.vy = 0, -snake.vel
+            if event.key == pygame.K_DOWN:
+                snake.vx, snake.vy = 0, snake.vel
+            if event.key == pygame.K_LEFT:
+                snake.vx, snake.vy = -snake.vel, 0
+            if event.key == pygame.K_RIGHT:
+                snake.vx, snake.vy = snake.vel, 0
 
     snake.update()
 
@@ -70,10 +79,12 @@ while True:
 
     
     if not screen.get_rect().collidepoint(snake.x, snake.y):
-        break
+        screen.fill('red')
+        screen.blit(text, (150, 170))
+        FPS = 0
 
     food_group.draw(screen)
     snake.draw(screen)
 
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(FPS)
